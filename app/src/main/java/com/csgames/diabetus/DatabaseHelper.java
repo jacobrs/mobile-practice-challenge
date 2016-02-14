@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.context = context;
 
         String packageName = context.getPackageName();
+//        DB_PATH = context.getApplicationInfo().dataDir + "/databases/";
         DB_PATH = String.format("//data//data//%s//databases//", packageName);
         DB_NAME = databaseName;
         openDataBase();
@@ -77,14 +79,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void createDataBase() {
-
-        try {
-            copyDataBase();
-            Log.d(this.getClass().toString(), "Copying Database");
-        } catch (IOException e) {
-            Log.e(this.getClass().toString(), "Copying error");
-            throw new Error("Error copying database!");
+        if(!checkDB()) {
+            this.getReadableDatabase();
+            this.close();
+            try {
+                copyDataBase();
+                Log.d(this.getClass().toString(), "Copying Database");
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(this.getClass().toString(), "Copying error");
+                throw new Error("Error copying database!");
+            }
         }
     }
+
+    private boolean checkDB()
+    {
+        File dbFile = new File(DB_PATH+DB_NAME);
+        return dbFile.exists();
+
+
+    }
+
 
 }
