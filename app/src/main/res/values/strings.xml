@@ -1,9 +1,7 @@
 <resources>
-    <string name="app_name">diabetus</string>
     <string name="app_name">diabetus quiz</string>
     <string name="invalid_login">Login Failed</string>
     <string name="valid_login">Login Successful %s</string>
-    <string name="app_name">diabetus</string>
     <string name="title_activity_quiz">QuizActivity</string>
 
     <string name="hello_world">Hello world!</string>
