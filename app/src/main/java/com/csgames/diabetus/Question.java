@@ -1,5 +1,6 @@
 package com.csgames.diabetus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,6 +14,7 @@ public class Question {
     DatabaseHelper dbhelper;
 
     public Question(int q_id, String question){
+        answers = new ArrayList<Answer>();
         this.q_id = q_id;
         this.question = question;
 

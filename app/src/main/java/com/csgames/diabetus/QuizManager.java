@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +32,7 @@ public class QuizManager {
     // DB helper
 
     private QuizManager(Context context){
+        questionList = new ArrayList<>();
         dbHelper = new DatabaseHelper(context, "questions", null, 1);
 
         //get db
@@ -69,18 +71,24 @@ public class QuizManager {
         questioncursor.moveToFirst();
         while(!questioncursor.isAfterLast()){
             Question q = new Question(questioncursor.getInt(qid_col_index), questioncursor.getString(q_col_index));
-            String[] AnswerSelectCol ={
+            final String[] AnswerSelectCol ={
                     String.valueOf(questioncursor.getInt(qid_col_index))
             };
-            Cursor answercursor = db.query(ANSWERS_TABLE, AnswerResultCol, QUESTIONID_COL, AnswerSelectCol, null, null, null);
-            int a_col_index =  questioncursor.getColumnIndex(ANSWERS_COL);
-            int acorrect_col_index =  questioncursor.getColumnIndex(ANSWERS_CORRECT_COL);
+
+            Cursor answercursor = db.query(ANSWERS_TABLE, AnswerResultCol, QUESTIONID_COL+" = ?", AnswerSelectCol, null, null, null);
+            int a_col_index =  answercursor.getColumnIndex(ANSWERS_COL);
+            int acorrect_col_index =  answercursor.getColumnIndex(ANSWERS_CORRECT_COL);
+            answercursor.moveToFirst();
             while(!answercursor.isAfterLast()){
-                Answer a = new Answer(answercursor.getString(a_col_index), answercursor.getInt(acorrect_col_index));
+                String a_a = answercursor.getString(a_col_index);
+                int correct = answercursor.getInt(acorrect_col_index);
+                Answer a = new Answer(a_a,correct);
                 q.fillInAnswers(a);
+                answercursor.moveToNext();
             }
 
             questionList.add(q);
+            questioncursor.moveToNext();
         }
 
     }
